@@ -99,12 +99,5 @@ According to Dijkstra's algorithm implemented in this project:
 - **Timeout:** Indicates a severe congestion problem or an actual disconnected link, meaning ACKs failed to arrive within the RTO timeframe. The response is an immediate `cwnd` reset.
 - **Triple Duplicate ACK:** Indicates moderate congestion. The receiver successfully got subsequent packets, but is missing one. Network traffic is still actively flowing, so a softer back-off algorithm (Fast Recovery) is employed.
 
-## Demo Video Checklist
-- [ ] Show clean compilation (`gcc -Wall -Wextra node.c -o cse320_node.exe`).
-- [ ] Run TCP Reno against the timeout scenario and demonstrate `cwnd` resetting to 1.
-- [ ] Run TCP Tahoe and TCP Reno against the triple duplicate ACK scenario to explicitly contrast their output.
-- [ ] Run link state routing generation specifically checking nodes A, B, and F.
-- [ ] Run `A to D` and `F to E` message forwarding demonstrating the strict shortest paths requirement.
-
 ## Demo Video
-**Demo Video:** [Add link here]
+**Demo Video:** [https://drive.google.com/file/d/1AQbJoSWlubVlU3jlPJutbbMH98w6Dunw/view?usp=sharing](https://drive.google.com/file/d/1AQbJoSWlubVlU3jlPJutbbMH98w6Dunw/view?usp=sharing)
