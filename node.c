@@ -201,6 +201,14 @@ static void print_config(NodeConfig *config) {
     }
 }
 
+static void print_interactive_help(void) {
+    printf("Commands:\n");
+    printf("  send <destination> <message>\n");
+    printf("  route\n");
+    printf("  help\n");
+    printf("  quit\n");
+}
+
 static int run_event_file(const char *event_file, TCPState *tcp) {
     FILE *fp = fopen(event_file, "r");
     if (!fp) {
@@ -556,6 +564,98 @@ int simulate_send(NetworkGraph *graph, char source, char destination, const char
     return 1;
 }
 
+static int run_interactive_node(const char *config_file) {
+    NodeConfig config;
+    NetworkGraph graph;
+    char line[MAX_COMMAND];
+
+    if (!load_config(config_file, &config)) {
+        printf("Could not load config file: %s\n", config_file);
+        return 0;
+    }
+
+    print_config(&config);
+
+    if (!load_all_configs(&graph)) {
+        return 0;
+    }
+
+    print_routing_table(&graph, config.node_id);
+    printf("\nType 'help' for available commands.\n");
+
+    while (1) {
+        char *command;
+
+        printf("\nnode %c> ", config.node_id);
+
+        if (!fgets(line, sizeof(line), stdin)) {
+            printf("\n");
+            break;
+        }
+
+        line[strcspn(line, "\r\n")] = '\0';
+        command = line;
+
+        while (*command == ' ' || *command == '\t') {
+            command++;
+        }
+
+        if (*command == '\0') {
+            continue;
+        }
+
+        if (strcmp(command, "quit") == 0 || strcmp(command, "exit") == 0) {
+            printf("Exiting node %c.\n", config.node_id);
+            break;
+        }
+        else if (strcmp(command, "help") == 0) {
+            print_interactive_help();
+        }
+        else if (strcmp(command, "route") == 0) {
+            print_routing_table(&graph, config.node_id);
+        }
+        else if (strncmp(command, "send", 4) == 0 &&
+                 (command[4] == '\0' || command[4] == ' ' || command[4] == '\t')) {
+            char *p = command + 4;
+            char destination;
+            char *message;
+
+            while (*p == ' ' || *p == '\t') {
+                p++;
+            }
+
+            if (*p == '\0') {
+                printf("Usage: send <destination> <message>\n");
+                continue;
+            }
+
+            destination = *p;
+
+            while (*p != '\0' && *p != ' ' && *p != '\t') {
+                p++;
+            }
+
+            while (*p == ' ' || *p == '\t') {
+                p++;
+            }
+
+            message = p;
+
+            if (*message == '\0') {
+                printf("Usage: send <destination> <message>\n");
+                continue;
+            }
+
+            simulate_send(&graph, config.node_id, destination, message);
+        }
+        else {
+            printf("Unknown command. Type 'help' for available commands.\n");
+        }
+    }
+
+    return 1;
+}
+
 int main(int argc, char *argv[]) {
     NodeConfig config;
     TCPState tcp;
@@ -581,6 +681,15 @@ int main(int argc, char *argv[]) {
         simulate_send(&graph, argv[2][0], argv[3][0], argv[4]);
         return 0;
     }
+
+    if (argc == 2) {
+        if (!run_interactive_node(argv[1])) {
+            return 1;
+        }
+
+        return 0;
+    }
+
     /*
        For simplicity:
        ./node A.conf reno events/example_events.txt
@@ -589,7 +698,11 @@ int main(int argc, char *argv[]) {
        Algorithm selected = ALG_RENO;
     */
     if (argc != 4) {
+        printf("Usage: ./node <config_file>\n");
         printf("Usage: ./node <config_file> <algorithm> <event_file>\n");
+        printf("Usage: ./node --route <source>\n");
+        printf("Usage: ./node --send <source> <destination> <message>\n");
+        printf("Interactive example: ./node A.conf\n");
         printf("Example: ./node A.conf reno events/example_events.txt\n");
         printf("Algorithms: tahoe, reno, newreno\n");
         return 1;

@@ -3,6 +3,7 @@
 
 #define MAX_NEIGHBORS 16
 #define MAX_LINE 256
+#define MAX_COMMAND 512
 
 #define MAX_NODES 26
 #define INF 1000000000
