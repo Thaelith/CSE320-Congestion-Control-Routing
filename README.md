@@ -55,11 +55,6 @@ Windows with MinGW:
 gcc -Wall -Wextra node.c -o node.exe
 ```
 
-If using the included Windows executable:
-
-```bash
-.\cse320_node.exe A.conf
-```
 
 ## Interactive Node Mode
 
