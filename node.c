@@ -421,6 +421,7 @@ void print_routing_table(NetworkGraph *graph, char source) {
     int source_index;
     int dist[MAX_NODES];
     int previous[MAX_NODES];
+    int order[MAX_NODES];
     int i, j;
 
     source_index = graph_index(graph, source);
@@ -432,6 +433,20 @@ void print_routing_table(NetworkGraph *graph, char source) {
 
     dijkstra(graph, source_index, dist, previous);
 
+    for (i = 0; i < graph->node_count; i++) {
+        order[i] = i;
+    }
+
+    for (i = 0; i < graph->node_count - 1; i++) {
+        for (j = i + 1; j < graph->node_count; j++) {
+            if (graph->nodes[order[j]] < graph->nodes[order[i]]) {
+                int temp = order[i];
+                order[i] = order[j];
+                order[j] = temp;
+            }
+        }
+    }
+
     printf("\nRouting table for node %c\n", source);
     printf("Destination | Next Hop | Cost | Path\n");
     printf("---------------------------------------------\n");
@@ -440,19 +455,20 @@ void print_routing_table(NetworkGraph *graph, char source) {
         char path[MAX_NODES];
         int path_length;
         char next_hop = '-';
+        int destination_index = order[i];
 
-        path_length = build_path(graph, source_index, i, previous, path);
+        path_length = build_path(graph, source_index, destination_index, previous, path);
 
         if (path_length > 1) {
             next_hop = path[1];
         }
 
-        printf("%11c | %8c | ", graph->nodes[i], next_hop);
+        printf("%11c | %8c | ", graph->nodes[destination_index], next_hop);
 
-        if (dist[i] == INF) {
+        if (dist[destination_index] == INF) {
             printf("%4s | ", "INF");
         } else {
-            printf("%4d | ", dist[i]);
+            printf("%4d | ", dist[destination_index]);
         }
 
         if (path_length == 0) {
@@ -544,7 +560,7 @@ int main(int argc, char *argv[]) {
     NodeConfig config;
     TCPState tcp;
 
-        if (argc == 3 && strcmp(argv[1], "--route") == 0) {
+    if (argc == 3 && strcmp(argv[1], "--route") == 0) {
         NetworkGraph graph;
 
         if (!load_all_configs(&graph)) {

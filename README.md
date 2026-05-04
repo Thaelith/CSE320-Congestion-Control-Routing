@@ -30,7 +30,7 @@ This project simulates TCP congestion control behavior and demonstrates link-sta
 | `duplicate_ack_test.txt` | Test scenarios for analyzing the triple duplicate ACK threshold. |
 | `timeout_test.txt` | Test scenarios for analyzing timeout-based loss. |
 
-*(Note: No executable or intermediate compilation files are included to keep the repository clean.)*
+The folder includes `cse320_node.exe` for direct Windows execution. Rebuild from source with the commands below if needed.
 
 ## Compilation
 
@@ -48,7 +48,7 @@ gcc -Wall -Wextra node.c -o cse320_node
 
 *(Note: The commands below assume compilation on Windows `.\cse320_node.exe`. On Linux/macOS, use `./cse320_node` instead.)*
 
-### How to Run TCP Reno Tests
+### How to Run the Selected TCP Reno Tests
 ```bash
 .\cse320_node.exe A.conf reno example_events.txt
 ```
