@@ -55,11 +55,6 @@ Windows with MinGW:
 gcc -Wall -Wextra node.c -o node.exe
 ```
 
-If using the included Windows executable:
-
-```bash
-.\cse320_node.exe A.conf
-```
 
 ## Interactive Node Mode
 
@@ -209,4 +204,4 @@ The demonstration video should show:
 
 ## Demo Video
 
-**Demo Video:** [https://drive.google.com/file/d/1AQbJoSWlubVlU3jlPJutbbMH98w6Dunw/view?usp=sharing](https://drive.google.com/file/d/1AQbJoSWlubVlU3jlPJutbbMH98w6Dunw/view?usp=sharing)
+**Demo Video:** [https://drive.google.com/file/d/1Q54Bq4zFtoyIBWKaEwu-gUx02_Dvt5Qs/view?usp=sharing)
